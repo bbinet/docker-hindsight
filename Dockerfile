@@ -2,28 +2,26 @@ FROM debian:jessie
 
 MAINTAINER Bruno Binet <bruno.binet@helioslite.com>
 
-ENV LUASANDBOX_VERSION 0.20.2-hl.1
-ENV LUASANDBOX_MD5 0669f9e2032528b00707fc073cf5434d
-ENV HINDSIGHT_VERSION 0.7.2-hl.1
-ENV HINDSIGHT_MD5 6ef79d34e0b17aee634d91c4a46781b1
+ENV LUA_SANDBOX_VERSION 1.1.0-hl2
+ENV LUA_SANDBOX_MD5 2b6d0349ac6760409cc0edbb62eee3a6
+ENV LUA_SANDBOX_EXTENSIONS_VERSION 0.1-hl2
+ENV LUA_SANDBOX_EXTENSIONS_MD5 5b93810b6869bfbbdc2b7399415e0a54
+ENV HINDSIGHT_VERSION 0.11.1-hl2
+ENV HINDSIGHT_MD5 430d37b8d4e4d3fca1a2b0de1e8737d8
 
 ENV DEBIAN_FRONTEND noninteractive
-RUN apt-get update && \
-  apt-get install -yq --no-install-recommends libreadline5 curl ca-certificates && \
-  curl -fSL -o /tmp/luasandbox-${LUASANDBOX_VERSION}-amd64.tar.gz https://github.com/helioslite/lua_sandbox/releases/download/v${LUASANDBOX_VERSION}/luasandbox-${LUASANDBOX_VERSION}-amd64.tar.gz && \
-  echo "${LUASANDBOX_MD5}  /tmp/luasandbox-${LUASANDBOX_VERSION}-amd64.tar.gz" | md5sum --check && \
-  mkdir -p /opt/luasandbox && \
-  tar xf /tmp/luasandbox-${LUASANDBOX_VERSION}-amd64.tar.gz --strip-components=1 -C /opt/luasandbox && \
-  rm /tmp/luasandbox-${LUASANDBOX_VERSION}-amd64.tar.gz && \
-  curl -fSL -o /tmp/hindsight-${HINDSIGHT_VERSION}-amd64.tar.gz https://github.com/helioslite/hindsight/releases/download/v${HINDSIGHT_VERSION}/hindsight-${HINDSIGHT_VERSION}-amd64.tar.gz && \
-  echo "${HINDSIGHT_MD5}  /tmp/hindsight-${HINDSIGHT_VERSION}-amd64.tar.gz" | md5sum --check && \
-  mkdir -p /opt/hindsight && \
-  tar xf /tmp/hindsight-${HINDSIGHT_VERSION}-amd64.tar.gz --strip-components=1 -C /opt/hindsight && \
-  rm /tmp/hindsight-${HINDSIGHT_VERSION}-amd64.tar.gz && \
-  rm -rf /var/lib/apt/lists/*
+ENV GITHUB "https://github.com/helioslite"
+
+ADD install_debs.sh /install_debs.sh
+RUN apt-get update && apt-get install -yq --no-install-recommends \
+      libreadline5 wget ca-certificates libpq5 && \
+    rm -rf /var/lib/apt/lists/*
+
+
+RUN /install_debs.sh "${GITHUB}/lua_sandbox/releases/download/v${LUA_SANDBOX_VERSION}" "${LUA_SANDBOX_MD5}"
+RUN /install_debs.sh "${GITHUB}/lua_sandbox_extensions/releases/download/v${LUA_SANDBOX_EXTENSIONS_VERSION}" "${LUA_SANDBOX_EXTENSIONS_MD5}"
+RUN /install_debs.sh "${GITHUB}/hindsight/releases/download/v${HINDSIGHT_VERSION}" "${HINDSIGHT_MD5}"
 
 #EXPOSE 5565
 
-ENV LD_LIBRARY_PATH /opt/luasandbox/lib
-
-ENTRYPOINT ["/opt/hindsight/bin/hindsight"]
+ENTRYPOINT ["/usr/bin/hindsight"]
