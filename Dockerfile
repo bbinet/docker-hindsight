@@ -18,9 +18,9 @@ RUN apt-get update && apt-get install -yq --no-install-recommends \
     rm -rf /var/lib/apt/lists/*
 
 
-RUN /install_debs.sh "${GITHUB}/lua_sandbox/releases/download/v${LUA_SANDBOX_VERSION}" "${LUA_SANDBOX_MD5}"
-RUN /install_debs.sh "${GITHUB}/lua_sandbox_extensions/releases/download/v${LUA_SANDBOX_EXTENSIONS_VERSION}" "${LUA_SANDBOX_EXTENSIONS_MD5}"
-RUN /install_debs.sh "${GITHUB}/hindsight/releases/download/v${HINDSIGHT_VERSION}" "${HINDSIGHT_MD5}"
+RUN /install_debs.sh "${GITHUB}/lua_sandbox/releases/download/${LUA_SANDBOX_VERSION}" "${LUA_SANDBOX_MD5}"
+RUN /install_debs.sh "${GITHUB}/lua_sandbox_extensions/releases/download/${LUA_SANDBOX_EXTENSIONS_VERSION}" "${LUA_SANDBOX_EXTENSIONS_MD5}"
+RUN /install_debs.sh "${GITHUB}/hindsight/releases/download/${HINDSIGHT_VERSION}" "${HINDSIGHT_MD5}"
 
 #EXPOSE 5565
 
