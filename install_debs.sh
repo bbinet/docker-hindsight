@@ -20,6 +20,6 @@ do
         wget --retry-connrefused "${base_url}/${pkg}"
         echo "${line}" | md5sum --check
     done
-    dpkg -i *.deb
+    apt install -yq --no-install-recommends ./*.deb
 )
 rm -fr debs
